@@ -88,6 +88,7 @@ escaner_output = []
 
 
 def analizador():
+    # se especifica que archivo es el que se va a leer
     file = open("code.txt", 'r')
     estado_actual = 0
     string_aux = ""
@@ -500,4 +501,5 @@ def imprimeTablas(error_aux):
         print(tabla_strings)
 
 
+# se llama la funcion del analizador
 analizador()
