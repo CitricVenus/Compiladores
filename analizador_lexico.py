@@ -154,10 +154,10 @@ def analizador():
                     escaner_output.append(numero_aux)
                     reconocimiento_de_tokens.append("!=")
                     continue
-                if (string_aux in tokens):
-                    numero_aux = tokens.get(string_aux)
+                if (string_aux in tokens or string_aux.lower() in tokens):
+                    numero_aux = tokens.get(string_aux.lower())
                     escaner_output.append(numero_aux)
-                    reconocimiento_de_tokens.append(string_aux)
+                    reconocimiento_de_tokens.append(string_aux.lower())
                 # Si no es un estado con caracteres compuestos, revisa si es un identificador, un string, numero entero o un numero flotante
                 else:
                     if (estado_actual == 13):
@@ -274,10 +274,10 @@ def analizador():
                     # imprimeTablas(True)
                     break
             # Si char tiene el valor de un token, aqui revisamos que sea un token valido y lo agregamos al escaner output y al reconocimiento de tokens
-            if (char in tokens):
-                numero_aux = tokens.get(char)
+            if (char in tokens or char.lower() in tokens):
+                numero_aux = tokens.get(char.lower())
                 escaner_output.append(numero_aux)
-                reconocimiento_de_tokens.append(char)
+                reconocimiento_de_tokens.append(char.lower())
 
     # Se cierra el archivo leido
     file.close()
