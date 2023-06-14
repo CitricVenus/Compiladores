@@ -520,9 +520,11 @@ def syntax_analysis():
     current_token = reconocimiento_de_tokens[current_token_cont]
     program()
     if(current_token == '$'):
+        print()
         print("Syntax_Analysis_OK")
         exit(0)
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1)
     
@@ -617,6 +619,7 @@ def param_list_prime():
         return
     
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1)      
 
@@ -633,6 +636,7 @@ def param_prime():
     elif current_token == ',' or current_token == ')':
         return
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1) 
 
@@ -721,6 +725,7 @@ def selection_stmt_prime():
     elif (current_token in tabla_identifieres) or current_token == '{' or current_token == 'if' or current_token == 'while' or   current_token == 'return' or current_token =='input' or current_token == 'output'or current_token == '}' or current_token == 'else':
          return
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1) 
     
@@ -752,6 +757,7 @@ def expression_prime():
          return
         
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1)    
     
@@ -786,6 +792,7 @@ def arithmetic_expression_prime():
     elif current_token == ']' or current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == ')' or current_token == ';' or current_token == ',':
         return
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1)   
 
@@ -807,6 +814,7 @@ def term_prime():
     elif  current_token == '+' or current_token == '-' or current_token == ']' or current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == ')' or current_token == ';' or current_token == ',':
         return
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1)  
 
@@ -845,6 +853,7 @@ def arg_list_prime():
     elif current_token == ')':
         return
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1)  
         
@@ -853,6 +862,7 @@ def match(terminal):
     global current_token_cont
     global current_token
     if current_token == '$' :
+        print()
         print("Syntax_Analysis_OK")
         exit(0)
     elif current_token == terminal:
@@ -860,6 +870,7 @@ def match(terminal):
         current_token = reconocimiento_de_tokens[current_token_cont]
   
     else:
+        print()
         print("Syntax_Analysis_Error")
         exit(1)
 
