@@ -86,8 +86,10 @@ tabla_floats = {}
 reconocimiento_de_tokens = []
 escaner_output = []
 
-current_token = ""
+current_token = ''
 current_token_cont = 0
+
+
 
 
 def analizador():
@@ -507,31 +509,28 @@ def imprimeTablas(error_aux):
        
 
 # se llama la funcion del analizador
-analizador()
 
-def match(terminal):
-    if current_token == terminal:
-        current_token = reconocimiento_de_tokens[current_token_cont + 1]
-    else:
-        print("Error")
-        exit(1)
+
+
+
         
 def syntax_analysis():
+    global current_token
     reconocimiento_de_tokens.append('$')
     current_token = reconocimiento_de_tokens[current_token_cont]
     program()
     if(current_token == '$'):
         print("Syntax_Analysis_OK")
+        exit(0)
     else:
         print("Syntax_Analysis_Error")
         exit(1)
     
 
 def program():
-    declaration()
-    if current_token == 'void':
+        declaration_list()
         match('void')
-        match('ID')
+        match(current_token)
         match('(')
         match('void')
         match(')')
@@ -541,29 +540,20 @@ def program():
         match('return')
         match(';')
         match('}')
-    else:
-        print("Syntax_Analysis_Error")
-        exit(1)
 
 def declaration_list():
     declaration()
     declaration_list()
     if current_token == 'void':
-        match('void')
         return
     else:
       print("Syntax_Analysis_Error")
       exit(1)  
 
 def declaration():
-    type_specifer()
-    if current_token == 'ID':
-        match('ID')
-        declaration_prime()
-        
     if current_token == 'void':
         match('void')
-        match('ID')
+        match(current_token)
         match('(')
         params()
         match(')')
@@ -573,6 +563,13 @@ def declaration():
         match('return')
         return_stmt_prime()
         match('}')  
+    else:
+        type_specifer()
+        match(current_token)
+        declaration_prime()
+  
+        
+    
         
 def declaration_prime():
     if current_token == ';':
@@ -599,18 +596,16 @@ def type_specifer():
     elif current_token == 'float':
           match('float')
     elif current_token == 'string':
-        match('string')
-    else:
-        print("Syntax_Analysis_Error")
-        exit(1)        
+        match('string')       
         
 def params():
-    param()
-    param_list_prime()
-    
     if current_token == 'void':
         match('void')
-        return
+    else:
+        param()
+        param_list_prime()
+    
+    
 
 def param_list_prime():
     if current_token == ',':
@@ -627,8 +622,8 @@ def param_list_prime():
 
 def param():
     type_specifer()
-    if current_token == 'ID':
-        match('ID')
+    if current_token in tabla_identifieres:
+        match(current_token)
         param_prime()
 
 def param_prime():
@@ -642,29 +637,28 @@ def param_prime():
         exit(1) 
 
 def local_declarations():
+    
+    if current_token in tabla_identifieres or current_token == '{' or current_token == 'if' or current_token == 'while' or current_token == 'return' or current_token == 'input' or current_token == 'output' or current_token == 'return' or current_token == '}':
+        return
+    
     type_specifer()
-    if current_token == 'ID':
-        match('ID')
+    if current_token in tabla_identifieres:
+        match(current_token)
         declaration_prime()
         local_declarations()
-    elif current_token == 'ID' or current_token == '{' or current_token == 'if' or current_token == 'while' or current_token == 'return' or current_token == 'input' or current_token == 'output' or current_token == 'return' or current_token == '}':
-        return
-    else:
-        print("Syntax_Analysis_Error")
-        exit(1) 
+    
+
     
 def statement_list():
-    statement()
-    statement_list()
     if current_token == 'return' or current_token == '}':
         return
     else:
-        print("Syntax_Analysis_Error")
-        exit(1) 
+        statement()
+        statement_list()
 
 def statement():
-    if current_token == 'ID':
-        match('ID')
+    if current_token in tabla_identifieres:
+        match(current_token)
         statement_prime()
     elif current_token == '{':
         match('{')
@@ -687,13 +681,13 @@ def statement():
     elif current_token == 'return':
         match('return')
         return_stmt_prime()
-    elif current_token == 'input':
-        match('input')
-        match('ID')
+    elif current_token == 'read':
+        match('read')
+        match(current_token)
         var_prime()
         match(';')
-    elif current_token == 'output':
-        match('output')
+    elif current_token == 'write':
+        match('write')
         expression()
         match(';')
     
@@ -712,8 +706,8 @@ def statement_prime():
 def assignment_stmt_prime():
  
     
-    if current_token == 'string_constant':
-        match('string_constant')
+    if current_token in tabla_strings:
+        match(current_token)
         match(';')
     
     else:
@@ -724,7 +718,7 @@ def selection_stmt_prime():
     if current_token == 'else':
         match('else')
         statement()
-    elif current_token == 'ID' or current_token == '{' or current_token == 'if' or current_token == 'while' or   current_token == 'return' or current_token =='input' or current_token == 'output'or current_token == '}' or current_token == 'else':
+    elif (current_token in tabla_identifieres) or current_token == '{' or current_token == 'if' or current_token == 'while' or   current_token == 'return' or current_token =='input' or current_token == 'output'or current_token == '}' or current_token == 'else':
          return
     else:
         print("Syntax_Analysis_Error")
@@ -821,13 +815,13 @@ def factor():
         match('(')
         arithmetic_expression()
         match(')')
-    elif current_token == 'ID':
-        match('ID')
+    elif current_token in tabla_identifieres:
+        match(current_token)
         factor_prime()
-    elif current_token == 'float_constant':
-        match('float_constant')
-    elif current_token == 'integer_constant':
-        match('integer_constant')
+    elif current_token in tabla_floats:
+        match(current_token)
+    elif current_token in tabla_integers:
+        match(current_token)
 
 def factor_prime():
     if current_token == '(' :
@@ -845,6 +839,7 @@ def call_prime():
         
 def arg_list_prime():
     if current_token == ',':
+        match(',')
         arithmetic_expression()
         arg_list_prime()
     elif current_token == ')':
@@ -854,6 +849,20 @@ def arg_list_prime():
         exit(1)  
         
          
+def match(terminal):
+    global current_token_cont
+    global current_token
+    if current_token == '$' :
+        print("Syntax_Analysis_OK")
+        exit(0)
+    elif current_token == terminal:
+        current_token_cont = current_token_cont+1
+        current_token = reconocimiento_de_tokens[current_token_cont]
+  
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)
 
 
+analizador()
 syntax_analysis()
