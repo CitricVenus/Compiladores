@@ -86,6 +86,9 @@ tabla_floats = {}
 reconocimiento_de_tokens = []
 escaner_output = []
 
+current_token = ""
+current_token_cont = 0
+
 
 def analizador():
     # se especifica que archivo es el que se va a leer
@@ -487,19 +490,370 @@ def nuevoEstado(estado, char):
 # imprime las tablas
 def imprimeTablas(error_aux):
     if (error_aux == True):
-        print("---------------------------Reconocimiento de tokens----------------------\n")
-        print(reconocimiento_de_tokens)
-        print("---------------------------Output de escaner----------------------\n")
-        print(escaner_output)
-        print("------------------------Tabla de identificadores-------------------------\n")
-        print(tabla_identifieres)
-        print("-----------Tabla de numeros con punto flotante-----------\n")
-        print(tabla_floats)
-        print("-----------Tabla de numeros enteros-----------\n")
-        print(tabla_integers)
-        print("---------Tabla de strings-------------\n")
-        print(tabla_strings)
-
+        
+            print("---------------------------Reconocimiento de tokens----------------------\n")
+            print(reconocimiento_de_tokens)
+            print("---------------------------Output de escaner----------------------\n")
+            print(escaner_output)
+            print("------------------------Tabla de identificadores-------------------------\n")
+            print(tabla_identifieres)
+            print("-----------Tabla de numeros con punto flotante-----------\n")
+            print(tabla_floats)
+            print("-----------Tabla de numeros enteros-----------\n")
+            print(tabla_integers)
+            print("---------Tabla de strings-------------\n")
+            print(tabla_strings)
+        
+       
 
 # se llama la funcion del analizador
 analizador()
+
+def match(terminal):
+    if current_token == terminal:
+        current_token = reconocimiento_de_tokens[current_token_cont + 1]
+    else:
+        print("Error")
+        exit(1)
+        
+def syntax_analysis():
+    reconocimiento_de_tokens.append('$')
+    current_token = reconocimiento_de_tokens[current_token_cont]
+    program()
+    if(current_token == '$'):
+        print("Syntax_Analysis_OK")
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)
+    
+
+def program():
+    declaration()
+    if current_token == 'void':
+        match('void')
+        match('ID')
+        match('(')
+        match('void')
+        match(')')
+        match('{')
+        local_declarations()
+        statement_list()
+        match('return')
+        match(';')
+        match('}')
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)
+
+def declaration_list():
+    declaration()
+    declaration_list()
+    if current_token == 'void':
+        match('void')
+        return
+    else:
+      print("Syntax_Analysis_Error")
+      exit(1)  
+
+def declaration():
+    type_specifer()
+    if current_token == 'ID':
+        match('ID')
+        declaration_prime()
+        
+    if current_token == 'void':
+        match('void')
+        match('ID')
+        match('(')
+        params()
+        match(')')
+        match('{')
+        local_declarations()
+        statement_list()
+        match('return')
+        return_stmt_prime()
+        match('}')  
+        
+def declaration_prime():
+    if current_token == ';':
+        match(';')
+    elif current_token == '[':
+        match('[')
+        match('integer_constant')
+        match(']')
+        match(';')
+    elif current_token == '(':
+        params()
+        match(')')
+        match('{')
+        local_declarations()
+        statement_list()
+        match('return')
+        return_stmt_prime()
+        match('}') 
+    
+        
+def type_specifer():
+    if current_token == 'int':
+          match('int')
+    elif current_token == 'float':
+          match('float')
+    elif current_token == 'string':
+        match('string')
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)        
+        
+def params():
+    param()
+    param_list_prime()
+    
+    if current_token == 'void':
+        match('void')
+        return
+
+def param_list_prime():
+    if current_token == ',':
+        match(',')
+        param()
+        param_list_prime()
+    
+    elif current_token == ',' or current_token == ')':
+        return
+    
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)      
+
+def param():
+    type_specifer()
+    if current_token == 'ID':
+        match('ID')
+        param_prime()
+
+def param_prime():
+    if current_token == '[':
+        match('[')
+        match(']')
+    elif current_token == ',' or current_token == ')':
+        return
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1) 
+
+def local_declarations():
+    type_specifer()
+    if current_token == 'ID':
+        match('ID')
+        declaration_prime()
+        local_declarations()
+    elif current_token == 'ID' or current_token == '{' or current_token == 'if' or current_token == 'while' or current_token == 'return' or current_token == 'input' or current_token == 'output' or current_token == 'return' or current_token == '}':
+        return
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1) 
+    
+def statement_list():
+    statement()
+    statement_list()
+    if current_token == 'return' or current_token == '}':
+        return
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1) 
+
+def statement():
+    if current_token == 'ID':
+        match('ID')
+        statement_prime()
+    elif current_token == '{':
+        match('{')
+        local_declarations()
+        statement_list()
+        match('}')
+    elif current_token == 'if':
+        match('if')
+        match('(')
+        expression()
+        match(')')
+        statement()
+        selection_stmt_prime()
+    elif current_token == 'while':
+        match('while')
+        match('(')
+        expression()
+        match(')')
+        statement()
+    elif current_token == 'return':
+        match('return')
+        return_stmt_prime()
+    elif current_token == 'input':
+        match('input')
+        match('ID')
+        var_prime()
+        match(';')
+    elif current_token == 'output':
+        match('output')
+        expression()
+        match(';')
+    
+def statement_prime():
+    
+    if current_token == '(':
+        match('(')
+        call_prime()
+        match(';')
+    else:
+        var_prime()
+        match('=')
+        assignment_stmt_prime()
+    
+    
+def assignment_stmt_prime():
+ 
+    
+    if current_token == 'string_constant':
+        match('string_constant')
+        match(';')
+    
+    else:
+        expression()
+        match(';')
+        
+def selection_stmt_prime():
+    if current_token == 'else':
+        match('else')
+        statement()
+    elif current_token == 'ID' or current_token == '{' or current_token == 'if' or current_token == 'while' or   current_token == 'return' or current_token =='input' or current_token == 'output'or current_token == '}' or current_token == 'else':
+         return
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1) 
+    
+def return_stmt_prime():
+    if current_token == ';':
+        match(';')
+    else:
+        expression()
+        match(';')
+
+def var_prime():
+    if current_token == '[':
+        match('[')
+        arithmetic_expression()
+        match(']')
+    elif current_token == ';' or current_token == '=' or current_token == '*' or current_token == '/' or current_token == '+' or current_token == '-' or current_token == ']'or current_token == ']' or current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == ')' or current_token == ',':
+        return
+
+def expression():
+    arithmetic_expression()
+    expression_prime()
+
+def expression_prime():
+    
+    relop()
+    arithmetic_expression()
+    
+    if current_token == ')' or current_token == ';':
+         return
+        
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)    
+    
+def relop():
+    if current_token == '<=':
+        match('<=')
+    elif current_token == '<':
+        match('<')
+    elif current_token == '>':
+        match('>')
+    elif current_token == '>=':
+        match('>=')
+    elif current_token == '==':
+        match('==')
+    elif current_token == '!=':
+        match('!=')
+    
+    
+def arithmetic_expression():
+    term()
+    arithmetic_expression_prime()
+
+def arithmetic_expression_prime():
+    if current_token == '+':
+        match('+')
+        term()
+        arithmetic_expression_prime()
+    elif current_token == '-':
+        match('-')
+        term()
+        arithmetic_expression_prime()
+    elif current_token == ']' or current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == ')' or current_token == ';' or current_token == ',':
+        return
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)   
+
+
+
+def term():
+    factor()
+    term_prime()
+
+def term_prime(): 
+    if current_token == '*':
+        match('*')
+        factor()
+        term_prime()
+    elif current_token == '/':
+        match('/')
+        factor()
+        term_prime()
+    elif  current_token == '+' or current_token == '-' or current_token == ']' or current_token == '<=' or current_token == '<' or current_token == '>' or current_token == '>=' or current_token == '==' or current_token == '!=' or current_token == ')' or current_token == ';' or current_token == ',':
+        return
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)  
+
+def factor():
+    if current_token == '(':
+        match('(')
+        arithmetic_expression()
+        match(')')
+    elif current_token == 'ID':
+        match('ID')
+        factor_prime()
+    elif current_token == 'float_constant':
+        match('float_constant')
+    elif current_token == 'integer_constant':
+        match('integer_constant')
+
+def factor_prime():
+    if current_token == '(' :
+        call_prime()
+    else:
+        var_prime()
+    
+def call_prime():
+    if current_token == ')':
+        match(')')
+    else:
+        arithmetic_expression()
+        arg_list_prime()
+        match(')')
+        
+def arg_list_prime():
+    if current_token == ',':
+        arithmetic_expression()
+        arg_list_prime()
+    elif current_token == ')':
+        return
+    else:
+        print("Syntax_Analysis_Error")
+        exit(1)  
+        
+         
+
+
+syntax_analysis()
