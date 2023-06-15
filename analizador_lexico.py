@@ -549,7 +549,7 @@ def declaration_list():
     if current_token == 'void':
         return
     else:
-      print("Syntax_Analysis_Error")
+      print("Syntax_Analysis_Error_in_Declaration_List")
       exit(1)  
 
 def declaration():
@@ -582,6 +582,7 @@ def declaration_prime():
         match(']')
         match(';')
     elif current_token == '(':
+        match('(')
         params()
         match(')')
         match('{')
@@ -620,7 +621,7 @@ def param_list_prime():
     
     else:
         print()
-        print("Syntax_Analysis_Error")
+        print("Syntax_Analysis_Error_in_param_list_prime")
         exit(1)      
 
 def param():
@@ -637,7 +638,7 @@ def param_prime():
         return
     else:
         print()
-        print("Syntax_Analysis_Error")
+        print("Syntax_Analysis_Error_in_param_list")
         exit(1) 
 
 def local_declarations():
@@ -726,7 +727,7 @@ def selection_stmt_prime():
          return
     else:
         print()
-        print("Syntax_Analysis_Error")
+        print("Syntax_Analysis_Error_in_selection_stmt_prime")
         exit(1) 
     
 def return_stmt_prime():
@@ -758,7 +759,7 @@ def expression_prime():
         
     else:
         print()
-        print("Syntax_Analysis_Error")
+        print("Syntax_Analysis_Error_in_expression_prime")
         exit(1)    
     
 def relop():
@@ -793,7 +794,7 @@ def arithmetic_expression_prime():
         return
     else:
         print()
-        print("Syntax_Analysis_Error")
+        print("Syntax_Analysis_Error_int_arithmetic_expression_prime")
         exit(1)   
 
 
@@ -815,7 +816,7 @@ def term_prime():
         return
     else:
         print()
-        print("Syntax_Analysis_Error")
+        print("Syntax_Analysis_Error_int_term_prime")
         exit(1)  
 
 def factor():
@@ -854,7 +855,7 @@ def arg_list_prime():
         return
     else:
         print()
-        print("Syntax_Analysis_Error")
+        print("Syntax_Analysis_Error_arg_list_prime")
         exit(1)  
         
          
@@ -871,7 +872,7 @@ def match(terminal):
   
     else:
         print()
-        print("Syntax_Analysis_Error")
+        print("Syntax_Analysis_in_Error_match")
         exit(1)
 
 
